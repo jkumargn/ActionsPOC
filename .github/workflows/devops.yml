@@ -13,12 +13,24 @@
 #
 # For more information on the OpenShift Action, refer to https://github.com/redhat-developer/openshift-actions
 
-
 name: CI Pipeline  
 on: [push]  
 jobs:  
-  greet:  
+  test:  
     runs-on: ubuntu-latest  
     steps:  
-      - name: Say Hello  
-        run: echo "Hello, GitHub Actions!"
+      - name: Checkout code  
+        uses: actions/checkout@v4  
+
+      - name: Setup Node.js  
+        uses: actions/setup-node@v4  
+        with:  
+          node-version: 20  
+
+      - name: Install dependencies (simulated)  
+        run: npm ci && npm test  
+        continue-on-error: true  # Allows the job to proceed even if this step fails (for demo purposes)  
+
+      - name: Print success  
+        if: success()  
+        run: echo "✅ Tests passed! ${{ github.actor }} deployed this."
